@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Geolocation from '@react-native-community/geolocation';
+import DeviceInfo from 'react-native-device-info';
 
 // Get today's date in YYYY-MM-DD format
 const getCurrentDate = () => {
@@ -20,6 +21,15 @@ const TimerApp = ({ completedDays }) => {
   const [locationError, setLocationError] = useState(null);
   const [deviceID, setDeviceID] = useState(null);
 
+  // Mark the selected date and other days
+  useEffect(() => {
+    const fetchDeviceId = async () => {
+      const id = await DeviceInfo.getUniqueId();
+      setDeviceID(id);
+    };
+
+    fetchDeviceId();
+  }, []);
 
   useEffect(() => {
     requestLocationPermission(); // Ask for location permission on startup
@@ -72,7 +82,7 @@ const TimerApp = ({ completedDays }) => {
   // Start Timer Function
   const sendPostRequest = (status) => {
     const payload = {
-      device_id: "126ggffj"
+      device_id: deviceID
     };
     
     fetch(`https://f1e9-59-97-51-97.ngrok-free.app/thiran_attendance/attendance/${status}/`, {
